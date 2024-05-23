@@ -1,3 +1,4 @@
+const colors = require('colors');
 const si = require('systeminformation');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const fs = require('fs');
@@ -31,6 +32,8 @@ async function logTemperatures(interval = 5000) {
         await csvWriter.writeRecords([]);
     }
 
+    console.log("######## MONITOR TEMPERATURE SCRIPT by ginjol ########".blue.bold)
+
     setInterval(async () => {
         const { cpuTemp, gpuTemp } = await getTemperatures();
         const timestamp = new Date().toISOString();
@@ -42,8 +45,11 @@ async function logTemperatures(interval = 5000) {
         };
 
         await csvWriter.writeRecords([record]);
-
-        console.log(`${timestamp} - CPU Temp: ${cpuTemp} °C, GPU Temp: ${gpuTemp} °C`);
+        if (cpuTemp > 90 || gpuTemp > 80){
+            console.log(`${timestamp} - CPU Temp: ${cpuTemp} °C, GPU Temp: ${gpuTemp} °C`.red)
+        } else {
+            console.log(`${timestamp} - CPU Temp: ${cpuTemp} °C, GPU Temp: ${gpuTemp} °C`.green);
+        }
     }, interval);
 }
 
